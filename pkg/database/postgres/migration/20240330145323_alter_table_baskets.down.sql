@@ -1,0 +1,2 @@
+ALTER TABLE baskets
+DROP CONSTRAINT session_product_unique

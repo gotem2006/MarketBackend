@@ -1,7 +1,6 @@
 package product
 
 import (
-	"log"
 	model "shop/internal/models"
 	"shop/internal/repository"
 	"strconv"
@@ -20,15 +19,19 @@ func NewProductService(repo repository.ProductRepository) *productService{
 }
 
 
-func (p *productService) GetProduct(c *fiber.Ctx) model.Product{
+func (p *productService) GetProduct(c *fiber.Ctx) (Product model.Product, err error){
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil{
-		log.Println(err)
+		return Product, err
 	}
-	return p.repo.GetProduct(id)
+	Product, err = p.repo.GetProduct(id)
+	if err != nil{
+		return Product, err
+	}
+	return Product, nil
 }
 
-func (p *productService) GetProducts(c *fiber.Ctx) []model.Product{
+func (p *productService) GetProducts(c *fiber.Ctx) ([]model.Product, error){
 	return p.repo.GetProducts()
 }
 
@@ -36,7 +39,7 @@ func (p *productService) GetProducts(c *fiber.Ctx) []model.Product{
 func (p *productService) AddProduct(c *fiber.Ctx) error{
 	product := new(model.Product)
 	if err := c.BodyParser(&product);err != nil{
-		log.Println(err)
+		return err
 	}
 	return p.repo.AddProduct(*product)
 }
@@ -44,11 +47,11 @@ func (p *productService) AddProduct(c *fiber.Ctx) error{
 func (p *productService) AddAttribute(c *fiber.Ctx) error{
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil{
-		log.Println(err)
+		return err
 	}
 	attribute := new(model.Attribute)
 	if err := c.BodyParser(&attribute); err != nil{
-		log.Println(err)
+		return err
 	} 
 	return p.repo.AddAttribute(*attribute, id)
 }

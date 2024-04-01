@@ -25,3 +25,4 @@ CREATE TABLE attributes
         FOREIGN KEY(product_id)
         REFERENCES products(product_id)
 )
+

@@ -1,7 +1,6 @@
 package product
 
 import (
-	"log"
 	"shop/internal/service"
 
 	"github.com/gofiber/fiber/v2"
@@ -20,27 +19,42 @@ func NewProductHandler(productService service.ProductService) *productHandler{
 
 
 func (p *productHandler) GetProduct(c *fiber.Ctx) error{
-	return c.JSON(p.productService.GetProduct(c))
+	response, err := p.productService.GetProduct(c)
+	if err != nil{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"Error": err})
+	}
+	return c.JSON(response)
 }
 
 
 func (p *productHandler) PostProduct(c *fiber.Ctx) error{
 	err := p.productService.AddProduct(c)
 	if err != nil{
-		log.Println(err)
-		return c.JSON(fiber.Map{"result": "bad request"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"Error": err})
 	}
-	return c.JSON(fiber.Map{"result": "succes"})
+	return c.JSON(fiber.Map{"Result": "Succes, product added"})
 }
 
 func (p *productHandler) GetProducts(c *fiber.Ctx) error{
-	return c.JSON(fiber.Map{"products": p.productService.GetProducts(c)})
+	response, err := p.productService.GetProducts(c)
+	if err != nil{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"Error": err})
+	}
+	return c.JSON(fiber.Map{"products": response})
 }
 
 func (p *productHandler) AddAttribute(c *fiber.Ctx) error{
-	return p.productService.AddAttribute(c)
+	err := p.productService.AddAttribute(c)
+	if err != nil{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"Error": err})
+	}
+	return c.JSON(fiber.Map{"Result": "Success, attribute added"})
 }
 
 func (p *productHandler) AddCategory(c *fiber.Ctx) error{
-	return p.productService.AddCategory(c)
+	err := p.productService.AddCategory(c)
+	if err != nil{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"Error": err})
+	}
+	return c.JSON(fiber.Map{"Result": "Success, category added"})
 }
